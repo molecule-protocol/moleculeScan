@@ -4,16 +4,16 @@ pragma solidity >=0.6.0<0.9.0;
 
 interface MoleculeFactory {
 
-    function queryGeneralBatchStatus(uint [] memory _regionalId, address _reciever) external view returns(bool);
     function queryStatus(address user, address [] memory moleculeNftAddress ) external view returns(bool);
-    function queryProviderBatchStatus(uint [] memory _batchId,address _reciever,address _provider) external view returns(bool);
+    function queryGeneralBatchStatus(address addr, uint[] memory regionalId) external view returns(bool);
+    function queryProviderBatchStatus(address addr, uint[] memory batchId, address provider) external view returns(bool);
 }
 
 
-contract MoleculeScan {
+contract MoleculeScanV2 {
 
     // goerli testnet moleculeFactory Address
-    address private constant  moleculeFactory = 0x4A15994dcdc0C52E2C4F6Ebb1A25cc761b05dDdF;
+    address private constant  moleculeFactory = 0x0590923445E29ae0BD11E0809D2d5572eDD64d1D;
 
     modifier moleculeNftVerify(address [] memory _moleculeNftAddress){
         MoleculeFactory M = MoleculeFactory(moleculeFactory);
@@ -24,14 +24,14 @@ contract MoleculeScan {
 
   modifier moleculeGeneralBatchVerify(uint [] memory _regionalId){
       MoleculeFactory M = MoleculeFactory(moleculeFactory);
-      bool status = M.queryGeneralBatchStatus(_regionalId,msg.sender);
+      bool status = M.queryGeneralBatchStatus(msg.sender,_regionalId);
       require(status == false,"Molecule Access Denied");
       _;
   }
 
   modifier moleculeProviderBatchVerify(uint[] memory _batchId,address _provider){
       MoleculeFactory M = MoleculeFactory(moleculeFactory);
-      bool status = M.queryProviderBatchStatus(_batchId,msg.sender,_provider);
+      bool status = M.queryProviderBatchStatus(msg.sender,_batchId,_provider);
       require(status == false,"Molecule Access Denied");
       _;
   }
